@@ -24,8 +24,9 @@ MAKEFUN_OUTPUT_DIR=/tmp/makefun-news-local python3.13 main.py
 ```
 
 `main.py` reads `summary.txt` relative to its own location, strictly decodes
-UTF-8, validates the inclusive 1–2,000 Unicode character limit, and writes the
-original bytes. The summary has 1,722 characters, including its final newline.
+UTF-8, validates the inclusive 1–2,000 Unicode character limit, rejects
+whitespace-only summaries, and writes the original bytes without trimming.
+The summary has 1,804 characters, including its final newline.
 There are no timestamps, random values or runtime news lookups.
 
 ## Reproduce the checks
@@ -51,6 +52,7 @@ with tempfile.TemporaryDirectory() as temp:
     assert outputs[0] == outputs[1] == source
     count = len(source.decode('utf-8'))
     assert 1 <= count <= 2000
+    assert source.decode('utf-8').strip()
     print(f'PASS: identical outputs; {count} Unicode characters')
 PY
 ```
